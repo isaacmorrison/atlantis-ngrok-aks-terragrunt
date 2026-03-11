@@ -25,15 +25,15 @@ spec:
       containers:
         - args:
             - server
-            - --gh-user=REDACTED_EMAIL
-            - --gh-token=REDACTED_TOKEN
-            - --repo-allowlist=github.com/Aya-DevOpsTeam/service-catalog
+            - --gh-user=${GITHUB_USER}
+            - --gh-token=${GITHUB_TOKEN}
+            - --repo-allowlist=${GITHUB_REPO_ALLOWLIST}
             - --repo-config=/usr/local/bin/repos.yaml
           env:
             - name: SSH_AUTH_SOCK
               value: /ssh-agent
             - name: URL
-              value: https://f9ef-2601-601-1501-1a10-f5e3-e7d4-6294-f5a8.ngrok-free.app
+              value: ${NGROK_URL}
           image: atlantis:latest
           name: atlantis
           ports:
