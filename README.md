@@ -1,4 +1,4 @@
-# Atlantis + ngrok Quickstart
+# Atlantis + ngrok + Terragrunt Quickstart
 
 Modern Atlantis deployment scaffolded for both local Docker workflows (fronted by ngrok) and Kubernetes clusters. Use this repo to run Terraform/Terragrunt automation with GitHub webhooks while keeping secrets out of source control.
 
