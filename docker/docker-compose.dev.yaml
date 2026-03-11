@@ -1,0 +1,23 @@
+services:
+  atlantis:
+    image: atlantis:latest
+    command:
+      - "server" 
+      - "--gh-user=${ATLANTIS_GH_USER:-sample-bot@example.com}"
+      - "--gh-token=${ATLANTIS_GH_TOKEN:-ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}" 
+      - "--repo-allowlist=${ATLANTIS_ALLOWED_REPOS:-github.com/your-org/*}"
+      - "--repo-config=/usr/local/bin/repos.yaml"
+      - "--gh-webhook-secret=${ATLANTIS_GH_WEBHOOK_SECRET:-replace-me}"
+    build: .
+    ports:
+      - "4141:4141"
+    restart: always
+    volumes:
+      - ${HOME}/.ssh:/.ssh:ro
+      - ${PWD}:/atlantis/src:ro
+      - /run/host-services/ssh-auth.sock # Forward local machine SSH key to docker 
+    environment:
+      URL: "${ATLANTIS_URL:-https://example.ngrok-free.app}"
+      SSH_AUTH_SOCK: /ssh-agent
+
+      # example ngrok endpoints can be listed here for reference only

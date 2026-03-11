@@ -1,0 +1,21 @@
+repos:
+  - id: /.*/
+    allowed_overrides: [workflow]
+    workflow: terragrunt
+    pre_workflow_hooks:
+      - run: "terragrunt-atlantis-config generate --output atlantis.yaml --autoplan --parallel --create-workspace"
+workflows:
+  terragrunt:
+    plan:
+      steps:
+      - env:
+          name: TF_WORKSPACE
+          command: echo $WORKSPACE
+      - run: terragrunt plan -input=false -no-color
+
+    apply:
+      steps:
+      - env:
+          name: TF_WORKSPACE
+          command: echo $WORKSPACE
+      - run: terragrunt apply -input=false -no-color

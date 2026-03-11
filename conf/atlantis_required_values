@@ -1,0 +1,14 @@
+# ARM_CLIENT_ID ""
+# ARM_CLIENT_SECRET ""
+# ARM_SUBSCRIPTION_ID ""
+# ARM_TENANT_ID "" 
+export ATLANTIS_GH_USER=
+export $ATLANTIS_GH_TOKEN=
+export $ATLANTIS_ALLOWED_GH_REPO=
+export ATLANTIS_GH_WEBHOOK_SECRET=
+
+# server --gh-user=$GIT_USERNAME \ 
+#        --gh-token=$PAT_TOKEN \
+#        --repo-allowlist=github.com/Aya-DevOpsTeam/service-catalog \
+#        --repo-config=/usr/local/bin/repos.yaml \
+#        --gh-webhook-secret=$ATLANTIS_GH_WEBHOOK_SECRET

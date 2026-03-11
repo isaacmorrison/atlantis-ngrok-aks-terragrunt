@@ -1,0 +1,32 @@
+FROM ghcr.io/runatlantis/atlantis AS atlantis
+
+ARG TERRAGRUNT_VERSION v0.60.1 
+ARG terragrunt_atlantis_config_version 1.19.0
+
+ARG AZURE_CLI_VERSION=2.58.0
+ARG --gh-user
+USER root
+RUN set -ex && \
+    apk update && \
+    apk add py3-pip && \
+    apk add --virtual=build gcc libffi-dev musl-dev openssl-dev python3-dev cargo make unzip && \
+    pip install --upgrade pip --break-system-packages && \
+    pip install --upgrade setuptools --break-system-packages && \
+    pip install azure-cli==${AZURE_CLI_VERSION} --break-system-packages && \
+    az --version && \
+    ### cleanup build dependencies
+    apk del build
+
+COPY repos.yaml /usr/local/bin/repos.yaml
+# COPY /terragrunt-atlantis-config /usr/local/bin/terragrunt-atlantis-config
+ENV REPO_CONFIG /usr/local/bin/repos.yaml
+
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+COPY ./id_ed25519 /root/.ssh/id_ed25519
+RUN chmod 600 /root/.ssh/id_ed25519 
+ENV GIT_SSH_COMMAND="ssh -i /root/.ssh/id_ed25519 -o 'StrictHostKeyChecking no'"
+# Install terragrunt
+RUN curl -o /usr/local/bin/terragrunt -fsSL "https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" \
+    && chmod +x /usr/local/bin/terragrunt 
+
+RUN useradd atlantis && chown -R atlantis /atlantis && chown -R atlantis /home

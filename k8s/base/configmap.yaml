@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-configmap
+  namespace: backstage
+data:
+  DD_SITE: "us3.datadoghq.com"

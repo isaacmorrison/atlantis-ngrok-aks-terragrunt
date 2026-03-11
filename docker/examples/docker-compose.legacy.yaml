@@ -1,0 +1,40 @@
+services:
+  atlantis:
+    image: atlantis:latest
+    command:
+      - "server" 
+      - "--gh-user=${ATLANTIS_GH_USER:-sample-bot@example.com}"
+      - "--gh-token=${ATLANTIS_GH_TOKEN:-ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}" 
+      - "--repo-allowlist=${ATLANTIS_ALLOWED_REPOS:-github.com/your-org/*}"
+      - "--repo-config=/usr/local/bin/repos.yaml"
+    build: .
+    ports:
+      - "4141:4141"
+    restart: always
+    volumes:
+      - ${HOME}/.ssh:/.ssh:ro
+      - ${PWD}:/atlantis/src:ro
+      - /run/host-services/ssh-auth.sock # Forward local machine SSH key to docker
+    environment:
+      URL: "${ATLANTIS_URL:-https://example.ngrok-free.app}"
+      SSH_AUTH_SOCK: /ssh-agent
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: atlantis-ingress-sample
+spec:
+  ingressClassName: ngrok
+  rules:
+    - host: EXAMPLE_NGROK_DOMAIN
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: atlantis
+                port:
+                  number: 80
+
+# Example: az aks get-credentials --resource-group <rg> --name <aks-cluster>

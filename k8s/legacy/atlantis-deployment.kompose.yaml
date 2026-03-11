@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: atlantis
+  name: atlantis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: atlantis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: atlantis
+    spec:
+      containers:
+        - args:
+            - server
+            - --gh-user=REDACTED_EMAIL
+            - --gh-token=REDACTED_TOKEN
+            - --repo-allowlist=github.com/Aya-DevOpsTeam/service-catalog
+            - --repo-config=/usr/local/bin/repos.yaml
+          env:
+            - name: SSH_AUTH_SOCK
+              value: /ssh-agent
+            - name: URL
+              value: https://f9ef-2601-601-1501-1a10-f5e3-e7d4-6294-f5a8.ngrok-free.app
+          image: atlantis:latest
+          name: atlantis
+          ports:
+            - containerPort: 4141
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /.ssh
+              name: atlantis-cm0
+              readOnly: true
+            - mountPath: /atlantis/src
+              name: atlantis-cm1
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: atlantis-cm0
+          name: atlantis-cm0
+        - configMap:
+            name: atlantis-cm1
+          name: atlantis-cm1
